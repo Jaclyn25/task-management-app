@@ -2,6 +2,7 @@ using System.Data;
 using Daymark.Api.Data;
 using Microsoft.EntityFrameworkCore;
 namespace Daymark.Api.Services;
+
 public sealed record Distribution(string Name, int Count);
 public sealed record ProgressPoint(string Day, int Completed);
 public sealed record DashboardView(int Total, int ToDo, int InProgress, int Completed, int Overdue, int Upcoming,

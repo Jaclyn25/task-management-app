@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Daymark.Api.Data;
 using Daymark.Api.Services;
 namespace Daymark.Tests;
+
 [Collection("Postgres")]
 public class TaskTests(ApiFixture app)
 {
@@ -44,7 +45,10 @@ public class TaskTests(ApiFixture app)
         Assert.Null((await a.GetFromJsonAsync<TaskView>($"/api/tasks/{task.Id}"))!.CategoryId);
     }
     [Theory]
-    [InlineData("", 1, 0)] [InlineData("  ", 1, 0)] [InlineData("Valid", 99, 0)] [InlineData("Valid", 1, 99)]
+    [InlineData("", 1, 0)]
+    [InlineData("  ", 1, 0)]
+    [InlineData("Valid", 99, 0)]
+    [InlineData("Valid", 1, 99)]
     public async Task Invalid_titles_and_enums_are_rejected(string title, int priority, int status)
     {
         using var c = app.Browser(); await ApiFixture.RegisterAndLogin(c);

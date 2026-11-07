@@ -4,6 +4,7 @@ using Daymark.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Daymark.Api.Controllers;
+
 public sealed record CategoryRequest([Required, StringLength(60, MinimumLength = 1)] string Name, Guid? Version);
 [ApiController, Authorize, Route("api/categories")]
 public sealed class CategoriesController(CategoryService service) : ControllerBase

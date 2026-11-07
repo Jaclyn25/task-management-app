@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Daymark.Api.Data;
 using Daymark.Api.Services;
 namespace Daymark.Tests;
+
 [Collection("Postgres")]
 public class DashboardTests(ApiFixture app)
 {

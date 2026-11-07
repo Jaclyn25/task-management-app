@@ -3,6 +3,7 @@ using Daymark.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Daymark.Api.Controllers;
+
 [ApiController, Authorize, Route("api/tasks")]
 public sealed class TasksController(TaskService tasks) : ControllerBase
 {

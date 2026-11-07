@@ -1,16 +1,209 @@
-import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
-import { ArrowRight, Plus, CheckCircle2, Circle, Clock3, AlertCircle } from 'lucide-react'
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar, CartesianGrid } from 'recharts'
-import { api } from '../api'
-import type { Dashboard } from '../types'
-import { useProfile } from '../App'
-import { Loading, ErrorState, Empty, TaskRows, Due, Priority, dateLabel } from '../ui'
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Plus, CheckCircle2, Circle, Clock3, AlertCircle } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  BarChart,
+  Bar,
+  CartesianGrid,
+} from 'recharts';
+import { api } from '../api';
+import type { Dashboard } from '../types';
+import { useProfile } from '../App';
+import { Loading, ErrorState, Empty, TaskRows, Due, Priority, dateLabel } from '../ui';
 export default function DashboardPage() {
-  const user = useProfile(); const q = useQuery({ queryKey: ['dashboard'], queryFn: () => api<Dashboard>('/dashboard') })
-  if (q.isPending) return <Loading/>; if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()}/>
-  const d = q.data
-  return <><div className="page-heading"><div><span className="eyebrow">{dateLabel(d.today)} · OVERVIEW</span><h1>A little focus. Real progress.</h1><p>Welcome back, {user.displayName.split(' ')[0]}. Here’s where things stand.</p></div><Link className="button secondary" to="/tasks">View all tasks<ArrowRight size={16}/></Link></div><section className="overview-strip" aria-label="Task statistics">{[[d.total, 'Total tasks', ListIcon, '/tasks'], [d.toDo, 'To do', Circle, '/tasks?status=0'], [d.inProgress, 'In progress', Clock3, '/tasks?status=1'], [d.completed, 'Completed', CheckCircle2, '/completed'], [d.overdue, 'Overdue', AlertCircle, '/deadlines?deadline=overdue']].map(([count, label, Icon, path]) => { const C = Icon as typeof Circle; return <Link to={path as string} key={label as string} className={`stat ${label === 'Overdue' && d.overdue ? 'warning-stat' : ''}`}><span><C size={18}/>{label as string}</span><strong>{count as number}</strong></Link> })}</section><div className="dashboard-grid"><section className="panel progress-panel"><div className="section-heading"><div><span className="eyebrow">KEEP THE MOMENTUM</span><h2>Your progress, this week</h2></div><span className="progress-value">{d.completionPercentage}%<small>of all tasks complete</small></span></div><div className="progress-track"><span style={{ width: `${d.completionPercentage}%` }}/></div><div className="chart" role="img" aria-label={`Daily completions for the last seven days: ${d.progress.map(x => `${x.day}: ${x.completed}`).join(', ')}`}><ResponsiveContainer width="100%" height="100%"><AreaChart data={d.progress} margin={{ top: 15, right: 15, left: -25, bottom: 0 }}><CartesianGrid strokeDasharray="3 4" vertical={false}/><XAxis dataKey="day" tickFormatter={v => new Date(`${v}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short' })} axisLine={false} tickLine={false}/><YAxis allowDecimals={false} axisLine={false} tickLine={false}/><Tooltip/><Area type="monotone" dataKey="completed" name="Completed" stroke="var(--accent)" fill="var(--accent-soft)" strokeWidth={2}/></AreaChart></ResponsiveContainer></div><div className="legend">{d.statuses.map((s, i) => <Link to={`/tasks?status=${i}`} key={s.name}><span className={`legend-dot dot${i}`}/>{s.name}<strong>{s.count}</strong></Link>)}</div></section><section className="panel deadline-panel"><div className="section-heading"><div><span className="eyebrow">ON THE HORIZON</span><h2>Upcoming & overdue</h2></div><Link to="/deadlines" aria-label="View all deadlines"><ArrowRight size={20}/></Link></div><p className="hint">{d.upcoming} due in the next seven days · {d.overdue} overdue</p>{d.deadlines.length ? <div className="deadline-list">{d.deadlines.map(t => <Link key={t.id} to={`/tasks/${t.id}`}><strong>{t.title}</strong><span><Due task={t} today={d.today}/><Priority value={t.priority}/></span></Link>)}</div> : <div className="quiet-empty"><CalendarIcon/><h3>A little breathing room</h3><p>No open deadlines. Add one when you need it.</p></div>}</section><section className="panel recent-panel"><div className="section-heading"><h2>Recently touched</h2><Link to="/tasks">All tasks<ArrowRight size={16}/></Link></div>{d.recentTasks.length ? <TaskRows tasks={d.recentTasks} today={d.today}/> : <Empty/>}</section><section className="panel priority-panel"><div className="section-heading"><h2>Priority mix</h2><Link to="/tasks?sort=priority" aria-label="Sort tasks by priority"><ArrowRight size={18}/></Link></div><div className="chart small-chart" role="img" aria-label={d.priorities.map(p => `${p.name}: ${p.count}`).join(', ')}><ResponsiveContainer width="100%" height="100%"><BarChart data={d.priorities} layout="vertical" margin={{ left: 0, right: 15 }}><XAxis type="number" allowDecimals={false} hide/><YAxis type="category" dataKey="name" axisLine={false} tickLine={false} width={62}/><Tooltip/><Bar dataKey="count" name="Tasks" fill="var(--accent)" radius={[0, 4, 4, 0]} barSize={17}/></BarChart></ResponsiveContainer></div><p className="hint">{d.priorities.map(p => `${p.name} ${p.count}`).join(' · ')}</p></section></div><div className="bottom-note"><span>One task at a time is still moving forward.</span><Link to="/tasks/new"><Plus size={16}/>Add your next step</Link></div></>
+  const user = useProfile();
+  const q = useQuery({ queryKey: ['dashboard'], queryFn: () => api<Dashboard>('/dashboard') });
+  if (q.isPending) return <Loading />;
+  if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
+  const d = q.data;
+  return (
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">{dateLabel(d.today)} · OVERVIEW</span>
+          <h1>A little focus. Real progress.</h1>
+          <p>Welcome back, {user.displayName.split(' ')[0]}. Here’s where things stand.</p>
+        </div>
+        <Link className="button secondary" to="/tasks">
+          View all tasks
+          <ArrowRight size={16} />
+        </Link>
+      </div>
+      <section className="overview-strip" aria-label="Task statistics">
+        {[
+          [d.total, 'Total tasks', ListIcon, '/tasks'],
+          [d.toDo, 'To do', Circle, '/tasks?status=0'],
+          [d.inProgress, 'In progress', Clock3, '/tasks?status=1'],
+          [d.completed, 'Completed', CheckCircle2, '/completed'],
+          [d.overdue, 'Overdue', AlertCircle, '/deadlines?deadline=overdue'],
+        ].map(([count, label, Icon, path]) => {
+          const C = Icon as typeof Circle;
+          return (
+            <Link
+              to={path as string}
+              key={label as string}
+              className={`stat ${label === 'Overdue' && d.overdue ? 'warning-stat' : ''}`}
+            >
+              <span>
+                <C size={18} />
+                {label as string}
+              </span>
+              <strong>{count as number}</strong>
+            </Link>
+          );
+        })}
+      </section>
+      <div className="dashboard-grid">
+        <section className="panel progress-panel">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">KEEP THE MOMENTUM</span>
+              <h2>Your progress, this week</h2>
+            </div>
+            <span className="progress-value">
+              {d.completionPercentage}%<small>of all tasks complete</small>
+            </span>
+          </div>
+          <div className="progress-track">
+            <span style={{ width: `${d.completionPercentage}%` }} />
+          </div>
+          <div
+            className="chart"
+            role="img"
+            aria-label={`Daily completions for the last seven days: ${d.progress.map((x) => `${x.day}: ${x.completed}`).join(', ')}`}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={d.progress} margin={{ top: 15, right: 15, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 4" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  tickFormatter={(v) =>
+                    new Date(`${v}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short' })
+                  }
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis allowDecimals={false} axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="completed"
+                  name="Completed"
+                  stroke="var(--accent)"
+                  fill="var(--accent-soft)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="legend">
+            {d.statuses.map((s, i) => (
+              <Link to={`/tasks?status=${i}`} key={s.name}>
+                <span className={`legend-dot dot${i}`} />
+                {s.name}
+                <strong>{s.count}</strong>
+              </Link>
+            ))}
+          </div>
+        </section>
+        <section className="panel deadline-panel">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">ON THE HORIZON</span>
+              <h2>Upcoming & overdue</h2>
+            </div>
+            <Link to="/deadlines" aria-label="View all deadlines">
+              <ArrowRight size={20} />
+            </Link>
+          </div>
+          <p className="hint">
+            {d.upcoming} due in the next seven days · {d.overdue} overdue
+          </p>
+          {d.deadlines.length ? (
+            <div className="deadline-list">
+              {d.deadlines.slice(0, 4).map((t) => (
+                <Link key={t.id} to={`/tasks/${t.id}`}>
+                  <strong>{t.title}</strong>
+                  <span>
+                    <Due task={t} today={d.today} />
+                    <Priority value={t.priority} />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="quiet-empty">
+              <CalendarIcon />
+              <h3>A little breathing room</h3>
+              <p>No open deadlines. Add one when you need it.</p>
+            </div>
+          )}
+        </section>
+        <section className="panel recent-panel">
+          <div className="section-heading">
+            <h2>Recently touched</h2>
+            <Link to="/tasks">
+              All tasks
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+          {d.recentTasks.length ? <TaskRows tasks={d.recentTasks} today={d.today} /> : <Empty />}
+        </section>
+        <section className="panel priority-panel">
+          <div className="section-heading">
+            <h2>Priority mix</h2>
+            <Link to="/tasks?sort=priority" aria-label="Sort tasks by priority">
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+          <div
+            className="chart small-chart"
+            role="img"
+            aria-label={d.priorities.map((p) => `${p.name}: ${p.count}`).join(', ')}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={d.priorities} layout="vertical" margin={{ left: 0, right: 15 }}>
+                <XAxis type="number" allowDecimals={false} hide />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  width={62}
+                />
+                <Tooltip />
+                <Bar
+                  dataKey="count"
+                  name="Tasks"
+                  fill="var(--accent)"
+                  radius={[0, 4, 4, 0]}
+                  barSize={17}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="hint">{d.priorities.map((p) => `${p.name} ${p.count}`).join(' · ')}</p>
+        </section>
+      </div>
+      <div className="bottom-note">
+        <span>One task at a time is still moving forward.</span>
+        <Link to="/tasks/new">
+          <Plus size={16} />
+          Add your next step
+        </Link>
+      </div>
+    </>
+  );
 }
-function ListIcon() { return <span aria-hidden="true">☷</span> }
-function CalendarIcon() { return <Clock3 size={26}/> }
+function ListIcon() {
+  return <span aria-hidden="true">☷</span>;
+}
+function CalendarIcon() {
+  return <Clock3 size={26} />;
+}
