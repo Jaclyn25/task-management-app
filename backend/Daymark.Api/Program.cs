@@ -1,0 +1,13 @@
+var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddJsonConsole();
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
+var app = builder.Build();
+app.UseExceptionHandler();
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", product = "Daymark" }));
+app.MapControllers();
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
+app.Run();
+public partial class Program;

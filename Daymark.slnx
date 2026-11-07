@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/Daymark.Api/Daymark.Api.csproj" />
+  </Folder>
+</Solution>
