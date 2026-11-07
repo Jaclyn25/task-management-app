@@ -35,6 +35,13 @@ test('mobile navigation and editor fit a narrow screen', async ({page}) => {
   await page.setViewportSize({width:390,height:844}); await account(page)
   await expect(page.getByRole('button',{name:'Toggle navigation'})).toBeVisible(); await page.getByRole('button',{name:'Toggle navigation'}).click(); await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'All tasks',exact:true}).click(); await expect(page.getByRole('heading',{name:'Everything you’re working toward.'})).toBeVisible(); await create(page,'A mobile next step'); expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })
+test('board moves persist across reload and completion', async ({page})=>{
+  await account(page); await create(page,'Move a meaningful step'); await page.goto('/board')
+  await page.getByLabel('Move Move a meaningful step').selectOption('1')
+  await expect(page.locator('.column-1').getByRole('heading',{name:'Move a meaningful step'})).toBeVisible()
+  await page.reload(); await expect(page.locator('.column-1').getByRole('heading',{name:'Move a meaningful step'})).toBeVisible()
+  await page.getByLabel('Move Move a meaningful step').selectOption('2'); await expect(page.locator('.column-2').getByRole('heading',{name:'Move a meaningful step'})).toBeVisible()
+})
 
 
 

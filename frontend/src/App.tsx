@@ -12,6 +12,7 @@ import TaskEditor from './pages/TaskEditor'
 import TaskDetails from './pages/TaskDetails'
 import Categories from './pages/Categories'
 import Account from './pages/Account'
+import Board from './pages/Board'
 
 const UserContext = createContext<Profile | null>(null)
 const FeedbackContext = createContext<(message: string) => void>(() => {})
@@ -32,5 +33,6 @@ export default function App() {
   useEffect(() => { const expired = () => { client.clear(); window.location.assign('/login') }; window.addEventListener('session-expired', expired); return () => window.removeEventListener('session-expired', expired) }, [client])
   if (user.isPending) return <Loading/>
   if (user.error && !(user.error instanceof ApiError && user.error.status === 401)) return <ErrorState error={user.error} retry={() => user.refetch()}/>
-  return <Routes><Route path="/login" element={user.data ? <Navigate to="/" replace/> : <Auth/>}/><Route path="/register" element={user.data ? <Navigate to="/" replace/> : <Auth register/>}/>{user.data ? <Route element={<Shell profile={user.data}/>}><Route index element={<DashboardPage/>}/><Route path="tasks" element={<Tasks/>}/><Route path="tasks/new" element={<TaskEditor/>}/><Route path="tasks/:id" element={<TaskDetails/>}/><Route path="tasks/:id/edit" element={<TaskEditor/>}/><Route path="categories" element={<Categories/>}/><Route path="deadlines" element={<Tasks mode="deadlines"/>}/><Route path="completed" element={<Tasks mode="completed"/>}/><Route path="account" element={<Account/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Route> : <Route path="*" element={<Navigate to="/login" replace/>}/>}</Routes>
+  return <Routes><Route path="/login" element={user.data ? <Navigate to="/" replace/> : <Auth/>}/><Route path="/register" element={user.data ? <Navigate to="/" replace/> : <Auth register/>}/>{user.data ? <Route element={<Shell profile={user.data}/>}><Route index element={<DashboardPage/>}/><Route path="tasks" element={<Tasks/>}/><Route path="tasks/new" element={<TaskEditor/>}/><Route path="tasks/:id" element={<TaskDetails/>}/><Route path="tasks/:id/edit" element={<TaskEditor/>}/><Route path="categories" element={<Categories/>}/><Route path="board" element={<Board/>}/><Route path="deadlines" element={<Tasks mode="deadlines"/>}/><Route path="completed" element={<Tasks mode="completed"/>}/><Route path="account" element={<Account/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Route> : <Route path="*" element={<Navigate to="/login" replace/>}/>}</Routes>
 }
+

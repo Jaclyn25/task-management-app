@@ -53,4 +53,10 @@ test('dashboard renders real metrics and useful links', async () => { mount('/')
 test('empty tasks explain how to begin', async () => { vi.mocked(api).mockImplementation(async p => p === '/account/profile' ? {displayName:'Alex',timeZone:'UTC'} : p === '/categories' ? [] : p === '/dashboard' ? dashboard : {items:[],total:0,page:1,pageSize:20}); mount('/tasks'); expect(await screen.findByText('A clear space')).toBeInTheDocument() })
 test('API errors provide a retry action', async () => { const base = vi.mocked(api).getMockImplementation()!; vi.mocked(api).mockImplementation(async p => { if(p.startsWith('/tasks?')) throw new ApiError('Unable to load tasks.',503); return base(p) }); mount('/tasks'); expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load tasks.'); expect(screen.getByRole('button',{name:'Try again'})).toBeInTheDocument() })
 test('sign-in form validates email and password', async () => { vi.mocked(api).mockRejectedValue(new ApiError('Sign in',401)); const user = userEvent.setup(); mount('/login'); await user.click(await screen.findByRole('button',{name:'Sign in'})); expect(await screen.findByText('Enter a valid email address.')).toBeInTheDocument(); expect(screen.getByText('Enter your password.')).toBeInTheDocument() })
+test('board status controls persist a versioned change', async () => {
+  const base = vi.mocked(api).getMockImplementation()!
+  vi.mocked(api).mockImplementation(async (p, init) => p.startsWith('/tasks?status=') && !p.includes('status=0') ? {items:[],total:0,page:1,pageSize:12} : base(p,init))
+  const user=userEvent.setup(); mount('/board'); await user.selectOptions(await screen.findByLabelText('Move Prepare proposal'),'1')
+  await waitFor(()=>expect(api).toHaveBeenCalledWith('/tasks/task-1',expect.objectContaining({method:'PUT',body:expect.stringContaining('"status":1')})))
+})
 
