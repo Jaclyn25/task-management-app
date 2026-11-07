@@ -1,0 +1,18 @@
+name: daymark
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: daymark
+      POSTGRES_USER: daymark
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    ports: ['127.0.0.1:54334:5432']
+    volumes: [daymark-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U daymark -d daymark']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+volumes:
+  daymark-data:
+

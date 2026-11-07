@@ -2,4 +2,7 @@
   <Folder Name="/backend/">
     <Project Path="backend/Daymark.Api/Daymark.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Daymark.Tests/Daymark.Tests.csproj" />
+  </Folder>
 </Solution>
