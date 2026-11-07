@@ -54,6 +54,78 @@ namespace Daymark.Api.Migrations
                     b.ToTable("Category");
                 });
 
+            modelBuilder.Entity("Daymark.Api.Data.WorkItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("OwnerId", "Priority");
+
+                    b.HasIndex("OwnerId", "UpdatedAt");
+
+                    b.HasIndex("OwnerId", "Status", "DueDate");
+
+                    b.ToTable("Tasks", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Task_Completion", "(\"Status\" = 2 AND \"CompletedAt\" IS NOT NULL) OR (\"Status\" <> 2 AND \"CompletedAt\" IS NULL)");
+
+                            t.HasCheckConstraint("CK_Task_Dates", "\"StartDate\" IS NULL OR \"DueDate\" IS NULL OR \"StartDate\" <= \"DueDate\"");
+
+                            t.HasCheckConstraint("CK_Task_Priority", "\"Priority\" BETWEEN 0 AND 3");
+
+                            t.HasCheckConstraint("CK_Task_Status", "\"Status\" BETWEEN 0 AND 2");
+
+                            t.HasCheckConstraint("CK_Task_Title", "length(trim(\"Title\")) > 0");
+                        });
+                });
+
             modelBuilder.Entity("Daymark.Api.Data.WorkspaceUser", b =>
                 {
                     b.Property<string>("Id")
@@ -267,6 +339,22 @@ namespace Daymark.Api.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Daymark.Api.Data.WorkItem", b =>
+                {
+                    b.HasOne("Daymark.Api.Data.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Daymark.Api.Data.WorkspaceUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

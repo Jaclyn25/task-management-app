@@ -14,6 +14,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<TaskService>();
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddDbContext<WorkspaceDb>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Workspace")
     ?? throw new InvalidOperationException("Configure ConnectionStrings__Workspace.")));
 builder.Services.AddIdentity<WorkspaceUser, IdentityRole>(o =>
@@ -41,7 +43,7 @@ builder.Services.AddRateLimiter(o =>
 {
     o.RejectionStatusCode = 429;
     o.AddPolicy("identity", c => RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString() ?? "local",
-        _ => new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = builder.Configuration.GetValue("Security:IdentityRequestsPerMinute", 20), Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 var app = builder.Build();
 app.UseExceptionHandler();
