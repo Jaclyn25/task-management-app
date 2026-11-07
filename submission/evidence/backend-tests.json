@@ -1,94 +1,104 @@
 {
+  "total": 19,
+  "passed": 19,
   "provider": "real PostgreSQL 17",
   "failed": 0,
-  "skipped": 0,
-  "total": 17,
-  "passed": 17,
   "tests": [
     {
-      "name": "Daymark.Tests.SecurityTests.Lockout_and_cookie_flags_are_real",
-      "duration": "00:00:00.6772743",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.AccountTests.Registration_login_profile_logout_and_session_rejection",
-      "duration": "00:00:00.2142827",
-      "outcome": "Passed"
-    },
-    {
       "name": "Daymark.Tests.TaskTests.Every_private_task_route_and_category_assignment_enforces_ownership",
-      "duration": "00:00:00.5644748",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"Valid\", priority: 1, status: 99)",
-      "duration": "00:00:00.2055425",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Filters_search_sort_pagination_and_invalid_dates",
-      "duration": "00:00:01.5847960",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.DashboardTests.Dashboard_is_owned_and_matches_real_tasks_and_deadline_filters",
-      "duration": "00:00:00.7477757",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Lifecycle_versions_completion_reopening_and_delete",
-      "duration": "00:00:00.2910025",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"  \", priority: 1, status: 0)",
-      "duration": "00:00:00.1978567",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.CategoryTests.Categories_are_private_unique_and_versioned",
-      "duration": "00:00:00.4662803",
+      "duration": "00:00:01.4342277",
       "outcome": "Passed"
     },
     {
       "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"Valid\", priority: 99, status: 0)",
-      "duration": "00:00:00.1678567",
+      "duration": "00:00:00.3925888",
       "outcome": "Passed"
     },
     {
-      "name": "Daymark.Tests.AccountTests.Csrf_and_invalid_registration_are_rejected",
-      "duration": "00:00:00.0835204",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.SecurityTests.Authentication_limit_is_enforced",
-      "duration": "00:00:00.2069474",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Deadline_ends_at_account_local_midnight(instant: \"2026-11-07T21:59:59Z\", overdue: False)",
-      "duration": "00:00:00.0063258",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.SecurityTests.Competing_edits_have_exactly_one_winner",
-      "duration": "00:00:00.1996842",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.TaskTests.Deadline_ends_at_account_local_midnight(instant: \"2026-11-07T22:00:00Z\", overdue: True)",
-      "duration": "00:00:00.0004076",
-      "outcome": "Passed"
-    },
-    {
-      "name": "Daymark.Tests.SecurityTests.All_authenticated_write_routes_require_csrf",
-      "duration": "00:00:00.2412328",
+      "name": "Daymark.Tests.SecurityTests.Lockout_and_cookie_flags_are_real",
+      "duration": "00:00:01.4658433",
       "outcome": "Passed"
     },
     {
       "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"\", priority: 1, status: 0)",
-      "duration": "00:00:00.1647891",
+      "duration": "00:00:00.5584601",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.AccountTests.Csrf_and_invalid_registration_are_rejected",
+      "duration": "00:00:00.1763919",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Deadline_ends_at_account_local_midnight(instant: \"2026-11-07T22:00:00Z\", overdue: True)",
+      "duration": "00:00:00.0010107",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.SecurityTests.Authentication_limit_is_enforced",
+      "duration": "00:00:00.4678761",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Lifecycle_versions_completion_reopening_and_delete",
+      "duration": "00:00:00.8356333",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Filters_search_sort_pagination_and_invalid_dates",
+      "duration": "00:00:04.3457251",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"Valid\", priority: 1, status: 99)",
+      "duration": "00:00:00.3974487",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Invalid_titles_and_enums_are_rejected(title: \"  \", priority: 1, status: 0)",
+      "duration": "00:00:00.4158058",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.SecurityTests.Competing_edits_have_exactly_one_winner",
+      "duration": "00:00:00.4163739",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.TaskTests.Deadline_ends_at_account_local_midnight(instant: \"2026-11-07T21:59:59Z\", overdue: False)",
+      "duration": "00:00:00.0109637",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.CategoryTests.Categories_are_private_unique_and_versioned",
+      "duration": "00:00:01.0352762",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.DashboardTests.Dashboard_is_owned_and_matches_real_tasks_and_deadline_filters",
+      "duration": "00:00:01.7811237",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.AccountTests.Registration_login_profile_logout_and_session_rejection",
+      "duration": "00:00:00.6139667",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.AccountTests.Accepted_windows_timezones_are_stored_as_browser_compatible_iana_ids(zone: \"Pacific Standard Time\", expected: \"America/Los_Angeles\")",
+      "duration": "00:00:00.4835930",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.SecurityTests.All_authenticated_write_routes_require_csrf",
+      "duration": "00:00:00.5516522",
+      "outcome": "Passed"
+    },
+    {
+      "name": "Daymark.Tests.AccountTests.Accepted_windows_timezones_are_stored_as_browser_compatible_iana_ids(zone: \"Egypt Standard Time\", expected: \"Africa/Cairo\")",
+      "duration": "00:00:00.4776878",
       "outcome": "Passed"
     }
-  ]
+  ],
+  "skipped": 0
 }

@@ -4,10 +4,10 @@ This report distinguishes actual executions from the coverage guide. Latest hand
 
 | Check | Actual result |
 | --- | --- |
-| Backend xUnit / real PostgreSQL | 17 passed, 0 failed, 0 skipped |
+| Backend xUnit / real PostgreSQL | 19 passed, 0 failed, 0 skipped |
 | Vitest / React Testing Library | 11 passed |
-| Playwright against production Docker | 6 passed, 0 failed (local Edge Chromium) |
-| Playwright Chromium in GitHub Actions | 6 critical flows pass |
+| Playwright against production Docker | 7 passed, 0 failed (local Edge Chromium) |
+| Playwright Chromium in GitHub Actions | Critical flows are rerun on the final fix PR and main |
 | TypeScript | Passed |
 | ESLint | Passed, no warnings/errors after final formatting |
 | Prettier source formatting | Passed |
@@ -20,7 +20,7 @@ This report distinguishes actual executions from the coverage guide. Latest hand
 | API container identity | Non-root uid/gid 1654 (`app`) |
 | API restart persistence | Existing session remains valid and all 10 fictional demo tasks remain |
 
-The complete container feature [CI run](https://github.com/Jaclyn25/task-management-app/actions/runs/42414647092) passed backend (53s), frontend (26s), Chromium (1m31s), containers (55s) and the secret scan. Production browser replay passed all six flows in 42.3s on 7 November 2026. Screenshots were recaptured from http://127.0.0.1:18084 at 23:14 Africa/Cairo. Final main CI is checked again at handoff.
+The complete container feature [CI run](https://github.com/Jaclyn25/task-management-app/actions/runs/42414647092) passed backend (53s), frontend (26s), Chromium (1m31s), containers (55s) and the secret scan. After the timezone regression fix, local production browser replay passed all seven flows in 35.2s on 7 November 2026. Screenshots were captured from http://127.0.0.1:18084 at 23:14 Africa/Cairo; the timezone fix does not change their UI. Final fix/main CI is checked again at handoff.
 
 ## Verified behavior
 
@@ -28,7 +28,7 @@ Backend tests cover registration/login/logout/profile, unauthenticated rejection
 
 Frontend interaction tests cover create/edit validation, invalid dates, concurrency-version submission, deletion confirmation, category/priority filters, status changes, overdue display, dashboard data, empty/error states, login validation and board updates. API fixtures isolate these interaction tests; browser/API/database tests provide end-to-end coverage.
 
-Playwright runs register/login/create/edit/complete/reopen/delete/logout, category/priority/search/filter workflows, deadline/dashboard behavior, private-resource rejection across users, anonymous access, mobile navigation/overflow and durable board moves after reload. Local execution uses Microsoft Edge's Chromium engine; CI uses Playwright's bundled Chromium.
+Playwright runs register/login/create/edit/complete/reopen/delete/logout, category/priority/search/filter workflows, deadline/dashboard behavior, private-resource rejection across users, anonymous access, mobile navigation/overflow, durable board moves after reload and browser-compatible profile timezone formatting. Local execution uses Microsoft Edge's Chromium engine; CI uses Playwright's bundled Chromium.
 
 ## Corrections during verification
 
@@ -38,5 +38,7 @@ Playwright runs register/login/create/edit/complete/reopen/delete/logout, catego
 - Corrected browser test locators to target native combobox roles and scoped mobile navigation.
 - Retried registry downloads and seeded ignored local build caches during unreliable package networking. Clean CI uses ordinary package restores.
 - Added unique dialog labels, hidden closed mobile navigation, formatted source and inherited Nginx security headers.
+- Reproduced a Windows timezone alias regression with two failing cases, normalized accepted names to IANA and reran all 19 backend tests plus seven production browser flows successfully.
+- Added canonical LF checkout attributes so Windows Git conversion does not produce false formatting failures.
 
 No failed run is reported as passing. Required final main/container verification is recorded in the final handoff evidence and CI links.

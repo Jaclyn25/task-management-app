@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-07T21:18:04.2593374+00:00",
+  "verifiedAt": "2026-11-07T23:29:37.0493814+02:00",
   "checks": [
     "Release build",
     "frontend production build",
@@ -15,7 +15,7 @@
     "session/data restart persistence"
   ],
   "backend": {
-    "passed": 17,
+    "passed": 19,
     "provider": "PostgreSQL 17",
     "skipped": 0,
     "failed": 0
@@ -27,7 +27,7 @@
   "screenshots": "docs/screenshots/",
   "ci": "https://github.com/Jaclyn25/task-management-app/actions/runs/42414647092",
   "playwrightProduction": {
-    "passed": 6,
+    "passed": 7,
     "engine": "Edge Chromium",
     "failed": 0
   },
@@ -42,6 +42,6 @@
     "npmVulnerabilities": 0
   },
   "url": "http://127.0.0.1:18084",
-  "testedApplicationCommit": "1ad59e311e61b2963d078179e027fd31ce9d95e8",
-  "finalMain": "Final merge SHA and final main run are checked after documentation merge and recorded at handoff/package manifest."
+  "testedApplicationCommit": "5f6a0695eb63c39a9f5eacd312700d04d86f84f8",
+  "finalMain": "Final fix merge SHA and final main run are checked at handoff and recorded in the package manifest/local final-main evidence."
 }
