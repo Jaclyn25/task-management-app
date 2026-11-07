@@ -4,7 +4,7 @@ These compact records derive from executed tools, not expected outputs:
 
 - `backend-tests.json`: xUnit TRX counts and individual outcomes, real PostgreSQL.
 - `frontend-tests.json`: Vitest JSON counts and named assertions.
-- `playwright-production.json`: six actual browser workflows against Docker.
+- `playwright-production.json`: seven actual browser workflows against Docker.
 - `container-status.jsonl`: sanitized `docker compose ps` state and loopback ports.
 - `container-smoke.json`: real HTTP health, SPA, security-header, authorization and CSRF probes.
 - `restart-check.json`: the same browser session and task totals survive an API restart.

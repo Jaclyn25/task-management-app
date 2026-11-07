@@ -11,7 +11,7 @@ All routes use `/api`, JSON and same-origin session cookies. OpenAPI is exposed 
 5. Refresh `/account/csrf` after login/logout because tokens bind to the current identity.
 6. `POST /account/logout` ends the session. `GET /account/profile` reads it; `PUT /account/profile` updates `{displayName,timeZone}`.
 
-Registration requires a unique valid email, a nonblank name up to 80 characters and 12–128 password characters including uppercase, lowercase, digit and non-alphanumeric. Timezones must resolve on the server. The client uses IANA timezone identifiers.
+Registration requires a unique valid email, a nonblank name up to 80 characters and 12–128 password characters including uppercase, lowercase, digit and non-alphanumeric. Timezones must resolve on the server. Supported Windows timezone names are normalized to IANA identifiers before storage so returned profile values work in browser date formatting. The client uses IANA timezone identifiers.
 
 ## Tasks
 

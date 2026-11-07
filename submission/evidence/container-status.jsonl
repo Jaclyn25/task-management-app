@@ -1,3 +1,3 @@
-{"service":"api","ports":[{"URL":"","TargetPort":8080,"PublishedPort":0,"Protocol":"tcp"}],"health":"healthy","state":"running"}
-{"service":"db","ports":[{"URL":"127.0.0.1","TargetPort":5432,"PublishedPort":54334,"Protocol":"tcp"}],"health":"healthy","state":"running"}
-{"service":"web","ports":[{"URL":"127.0.0.1","TargetPort":80,"PublishedPort":18084,"Protocol":"tcp"}],"health":"healthy","state":"running"}
+{"state":"running","ports":[{"URL":"","TargetPort":8080,"PublishedPort":0,"Protocol":"tcp"}],"health":"healthy","service":"api"}
+{"state":"running","ports":[{"URL":"127.0.0.1","TargetPort":5432,"PublishedPort":54334,"Protocol":"tcp"}],"health":"healthy","service":"db"}
+{"state":"running","ports":[{"URL":"127.0.0.1","TargetPort":80,"PublishedPort":18084,"Protocol":"tcp"}],"health":"healthy","service":"web"}

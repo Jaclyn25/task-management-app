@@ -8,4 +8,4 @@ Every mutating controller request validates a cookie/request antiforgery pair, i
 
 Tasks/categories are private: list queries filter by current user, direct reads and mutations require owner equality, and foreign category assignment is rejected. Dashboard queries use the same owner predicate. Foreign and absent resources both return 404.
 
-The account view edits display name and timezone; email changes, recovery mail, MFA and account deletion are not exposed. No external email service is configured.
+The account view edits display name and timezone. Supported Windows timezone names are normalized to browser-compatible IANA IDs during registration/profile updates; invalid zones are rejected. Email changes, recovery mail, MFA and account deletion are not exposed. No external email service is configured.

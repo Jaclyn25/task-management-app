@@ -136,3 +136,19 @@ test('board moves persist across reload and completion', async ({ page }) => {
     page.locator('.column-2').getByRole('heading', { name: 'Move a meaningful step' }),
   ).toBeVisible();
 });
+test('profile timezones remain compatible with browser date formatting', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await account(page);
+  const updated = await write(page.request, '/account/profile', 'PUT', {
+    displayName: 'Alex Morgan',
+    timeZone: 'Egypt Standard Time',
+  });
+  expect(updated.status()).toBe(200);
+  expect((await updated.json()).timeZone).toBe('Africa/Cairo');
+  await page.goto('/account');
+  await expect(page.getByLabel('Timezone')).toHaveValue('Africa/Cairo');
+  await create(page, 'Keep the calendar in sync');
+  await expect(page.getByText('Times shown in Africa/Cairo')).toBeVisible();
+  expect(errors).toEqual([]);
+});

@@ -26,9 +26,10 @@ public sealed class AccountController(UserManager<WorkspaceUser> users, SignInMa
     [HttpPost("register"), EnableRateLimiting("identity")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
-        if (!ValidZone(request.TimeZone)) return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]> { ["timeZone"] = ["Select a valid IANA timezone."] }));
+        var timeZone = NormalizeZone(request.TimeZone);
+        if (timeZone is null) return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]> { ["timeZone"] = ["Select a valid IANA timezone."] }));
         if (string.IsNullOrWhiteSpace(request.DisplayName)) return BadRequest(new ProblemDetails { Title = "Display name is required." });
-        var user = new WorkspaceUser { UserName = request.Email.Trim(), Email = request.Email.Trim(), DisplayName = request.DisplayName.Trim(), TimeZone = request.TimeZone };
+        var user = new WorkspaceUser { UserName = request.Email.Trim(), Email = request.Email.Trim(), DisplayName = request.DisplayName.Trim(), TimeZone = timeZone };
         var result = await users.CreateAsync(user, request.Password);
         if (!result.Succeeded) return BadRequest(new ProblemDetails { Title = "Registration could not be completed. Use a unique email and a stronger password." });
         return StatusCode(201, new { message = "Account created. Sign in to your workspace." });
@@ -57,20 +58,24 @@ public sealed class AccountController(UserManager<WorkspaceUser> users, SignInMa
     [Authorize, HttpPut("profile")]
     public async Task<IActionResult> Update(ProfileRequest request)
     {
-        if (!ValidZone(request.TimeZone) || string.IsNullOrWhiteSpace(request.DisplayName))
+        var timeZone = NormalizeZone(request.TimeZone);
+        if (timeZone is null || string.IsNullOrWhiteSpace(request.DisplayName))
             return BadRequest(new ProblemDetails { Title = "A display name and valid IANA timezone are required." });
         var user = (await users.GetUserAsync(User))!;
-        user.DisplayName = request.DisplayName.Trim(); user.TimeZone = request.TimeZone;
+        user.DisplayName = request.DisplayName.Trim(); user.TimeZone = timeZone;
         var result = await users.UpdateAsync(user);
         return result.Succeeded ? Ok(View(user)) : Conflict(new ProblemDetails { Title = "Profile changed. Reload and try again." });
     }
 
     private static object View(WorkspaceUser user) => new { user.Id, user.Email, user.DisplayName, user.TimeZone };
-    private static bool ValidZone(string zone)
+    private static string? NormalizeZone(string? zone)
     {
-        try { _ = TimeZoneInfo.FindSystemTimeZoneById(zone); return zone.Length <= 100; }
-        catch (TimeZoneNotFoundException) { return false; }
-        catch (InvalidTimeZoneException) { return false; }
+        if (string.IsNullOrWhiteSpace(zone) || zone.Length > 100) return null;
+        zone = zone.Trim();
+        if (zone != "UTC" && TimeZoneInfo.TryConvertWindowsIdToIanaId(zone, out var iana)) zone = iana;
+        try { _ = TimeZoneInfo.FindSystemTimeZoneById(zone); return zone; }
+        catch (TimeZoneNotFoundException) { return null; }
+        catch (InvalidTimeZoneException) { return null; }
     }
 }
 

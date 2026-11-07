@@ -16,6 +16,7 @@ Repository: https://github.com/Jaclyn25/task-management-app. The existing empty 
 | `test/security-and-critical-flows` | [#8](https://github.com/Jaclyn25/task-management-app/pull/8) | Cross-route CSRF, lockout/rate/cookies and competing edits |
 | `chore/container-validation` | [#9](https://github.com/Jaclyn25/task-management-app/pull/9) | Three healthy services, secure Nginx, build/audit/smoke CI and maintainable formatting |
 | `docs/submission-package` | [#10](https://github.com/Jaclyn25/task-management-app/pull/10) | Documentation, actual screenshots, execution evidence and reproducible packaging |
+| `fix/account-timezone-normalization` | [#11](https://github.com/Jaclyn25/task-management-app/pull/11) | Browser-safe timezone normalization, cross-platform line endings and refreshed regression evidence |
 
 Feature branches use the user's requested names without a `codex/` prefix. Priorities, status and date invariants were implemented together in the task-lifecycle PR because they share one relational entity and write contract; no artificial empty feature PRs were created. Each branch started from the synchronized merged base. Changes were reviewed locally before merging after checks passed. This is author review, not a claim of an independent human approval.
 
