@@ -1,0 +1,12 @@
+.env
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/TestResults/
+**/test-results/
+**/playwright-report/
+.local/
+*.zip
+*.log
+!submission/evidence/*.log
