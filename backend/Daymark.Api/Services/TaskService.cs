@@ -43,7 +43,8 @@ public sealed class TaskService(WorkspaceDb db, TimeProvider clock)
             "overdue" => items.Where(x => x.Status != TaskState.Completed && x.DueDate < today),
             "today" => items.Where(x => x.Status != TaskState.Completed && x.DueDate == today),
             "upcoming" => items.Where(x => x.Status != TaskState.Completed && x.DueDate >= today && x.DueDate <= end),
-            "none" => items.Where(x => x.DueDate == null), _ => items
+            "none" => items.Where(x => x.DueDate == null),
+            _ => items
         };
         var total = await items.CountAsync();
         items = q.Sort switch

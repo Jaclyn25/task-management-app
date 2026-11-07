@@ -1,16 +1,139 @@
-import { useState } from 'react'
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
-import { Tags, Pencil, Trash2, Plus, ArrowUpRight } from 'lucide-react'
-import { api, json } from '../api'
-import type { Category } from '../types'
-import { Confirm, Loading, ErrorState } from '../ui'
-import { useFeedback } from '../App'
+import { useState } from 'react';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { Tags, Pencil, Trash2, Plus, ArrowUpRight } from 'lucide-react';
+import { api, json } from '../api';
+import type { Category } from '../types';
+import { Confirm, Loading, ErrorState } from '../ui';
+import { useFeedback } from '../App';
 export default function Categories() {
-  const q = useQuery({ queryKey: ['categories'], queryFn: () => api<Category[]>('/categories') })
-  const [name, setName] = useState(''); const [editing, setEditing] = useState<Category | null>(null)
-  const client = useQueryClient(); const feedback = useFeedback()
-  const save = useMutation({ mutationFn: () => api(editing ? `/categories/${editing.id}` : '/categories', json(editing ? 'PUT' : 'POST', { name: name.trim(), version: editing?.version })), onSuccess: async () => { await client.invalidateQueries(); setName(''); setEditing(null); feedback('Category saved.') } })
-  const remove = useMutation({ mutationFn: (c: Category) => api(`/categories/${c.id}?version=${c.version}`, { method: 'DELETE' }), onSuccess: async () => { await client.invalidateQueries(); feedback('Category removed. Its tasks are now uncategorized.') } })
-  return <><div className="page-heading"><div><span className="eyebrow">CATEGORIES</span><h1>A place for every kind of work.</h1><p>Organize your tasks in a way that makes sense to you.</p></div></div><div className="category-layout"><section className="panel category-list"><div className="section-heading"><h2>Your categories</h2><span className="hint">{q.data?.length ?? 0} categories</span></div>{q.isPending ? <Loading/> : q.error ? <ErrorState error={q.error} retry={() => q.refetch()}/> : q.data.length ? q.data.map(c => <div className="category-row" key={c.id}><span className="category-icon"><Tags size={19}/></span><Link className="category-name" to={`/tasks?categoryId=${c.id}`}><strong>{c.name}</strong><small>{c.taskCount} tasks <ArrowUpRight size={12}/></small></Link><button className="icon-button" aria-label={`Rename ${c.name}`} onClick={() => { setEditing(c); setName(c.name) }}><Pencil size={16}/></button><Confirm title={`Delete ${c.name}?`} description="Tasks in this category will be preserved and become uncategorized." onConfirm={() => remove.mutate(c)} busy={remove.isPending}><Trash2 size={16}/><span className="sr-only">Delete {c.name}</span></Confirm></div>) : <div className="quiet-empty"><Tags size={28}/><h3>Give your work a home</h3><p>Create your first category beside this list.</p></div>}{remove.error && <ErrorState error={remove.error}/>}</section><form className="panel category-form" onSubmit={e => { e.preventDefault(); save.mutate() }}><h2>{editing ? 'Rename category' : 'Create a category'}</h2><label>Category name<input required maxLength={60} value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Personal projects"/></label><p className="hint">Keep names short and easy to recognize.</p>{save.error && <ErrorState error={save.error}/>}<div className="actions">{editing && <button type="button" className="button secondary" onClick={() => { setEditing(null); setName('') }}>Cancel</button>}<button className="button primary" disabled={save.isPending || !name.trim()}><Plus size={16}/>{save.isPending ? 'Saving…' : editing ? 'Save category' : 'Create category'}</button></div></form></div></>
+  const q = useQuery({ queryKey: ['categories'], queryFn: () => api<Category[]>('/categories') });
+  const [name, setName] = useState('');
+  const [editing, setEditing] = useState<Category | null>(null);
+  const client = useQueryClient();
+  const feedback = useFeedback();
+  const save = useMutation({
+    mutationFn: () =>
+      api(
+        editing ? `/categories/${editing.id}` : '/categories',
+        json(editing ? 'PUT' : 'POST', { name: name.trim(), version: editing?.version }),
+      ),
+    onSuccess: async () => {
+      await client.invalidateQueries();
+      setName('');
+      setEditing(null);
+      feedback('Category saved.');
+    },
+  });
+  const remove = useMutation({
+    mutationFn: (c: Category) =>
+      api(`/categories/${c.id}?version=${c.version}`, { method: 'DELETE' }),
+    onSuccess: async () => {
+      await client.invalidateQueries();
+      feedback('Category removed. Its tasks are now uncategorized.');
+    },
+  });
+  return (
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">CATEGORIES</span>
+          <h1>A place for every kind of work.</h1>
+          <p>Organize your tasks in a way that makes sense to you.</p>
+        </div>
+      </div>
+      <div className="category-layout">
+        <section className="panel category-list">
+          <div className="section-heading">
+            <h2>Your categories</h2>
+            <span className="hint">{q.data?.length ?? 0} categories</span>
+          </div>
+          {q.isPending ? (
+            <Loading />
+          ) : q.error ? (
+            <ErrorState error={q.error} retry={() => q.refetch()} />
+          ) : q.data.length ? (
+            q.data.map((c) => (
+              <div className="category-row" key={c.id}>
+                <span className="category-icon">
+                  <Tags size={19} />
+                </span>
+                <Link className="category-name" to={`/tasks?categoryId=${c.id}`}>
+                  <strong>{c.name}</strong>
+                  <small>
+                    {c.taskCount} tasks <ArrowUpRight size={12} />
+                  </small>
+                </Link>
+                <button
+                  className="icon-button"
+                  aria-label={`Rename ${c.name}`}
+                  onClick={() => {
+                    setEditing(c);
+                    setName(c.name);
+                  }}
+                >
+                  <Pencil size={16} />
+                </button>
+                <Confirm
+                  title={`Delete ${c.name}?`}
+                  description="Tasks in this category will be preserved and become uncategorized."
+                  onConfirm={() => remove.mutate(c)}
+                  busy={remove.isPending}
+                >
+                  <Trash2 size={16} />
+                  <span className="sr-only">Delete {c.name}</span>
+                </Confirm>
+              </div>
+            ))
+          ) : (
+            <div className="quiet-empty">
+              <Tags size={28} />
+              <h3>Give your work a home</h3>
+              <p>Create your first category beside this list.</p>
+            </div>
+          )}
+          {remove.error && <ErrorState error={remove.error} />}
+        </section>
+        <form
+          className="panel category-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            save.mutate();
+          }}
+        >
+          <h2>{editing ? 'Rename category' : 'Create a category'}</h2>
+          <label>
+            Category name
+            <input
+              required
+              maxLength={60}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Personal projects"
+            />
+          </label>
+          <p className="hint">Keep names short and easy to recognize.</p>
+          {save.error && <ErrorState error={save.error} />}
+          <div className="actions">
+            {editing && (
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => {
+                  setEditing(null);
+                  setName('');
+                }}
+              >
+                Cancel
+              </button>
+            )}
+            <button className="button primary" disabled={save.isPending || !name.trim()}>
+              <Plus size={16} />
+              {save.isPending ? 'Saving…' : editing ? 'Save category' : 'Create category'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
 }

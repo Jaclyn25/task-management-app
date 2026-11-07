@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 namespace Daymark.Api.Services;
+
 public sealed class DomainException(int status, string message) : Exception(message)
 { public int Status { get; } = status; }
 public sealed class DomainExceptionHandler : IExceptionHandler

@@ -13,6 +13,39 @@ services:
       interval: 5s
       timeout: 5s
       retries: 15
+  api:
+    build:
+      context: .
+      dockerfile: backend/Daymark.Api/Dockerfile
+    environment:
+      ConnectionStrings__Workspace: Host=db;Database=daymark;Username=daymark;Password=${POSTGRES_PASSWORD}
+      Database__Migrate: 'true'
+      DataProtection__Path: /keys
+      ASPNETCORE_HTTP_PORTS: '8080'
+    volumes: [daymark-keys:/keys]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, dotnet, Daymark.Api.dll, --health-check]
+      interval: 15s
+      timeout: 5s
+      retries: 15
+      start_period: 15s
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports: ['127.0.0.1:18084:80']
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1/api/health']
+      interval: 5s
+      timeout: 5s
+      retries: 15
 volumes:
   daymark-data:
+  daymark-keys:
 

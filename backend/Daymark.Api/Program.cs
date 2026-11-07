@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 
+if (args.Contains("--health-check"))
+{
+    Environment.ExitCode = await Daymark.Api.Infrastructure.HealthProbe.Run();
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole();

@@ -1,4 +1,5 @@
 namespace Daymark.Api.Data;
+
 public enum TaskPriority { Low, Medium, High, Urgent }
 public enum TaskState { ToDo, InProgress, Completed }
 public sealed class WorkItem

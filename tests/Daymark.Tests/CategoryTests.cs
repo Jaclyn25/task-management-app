@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Daymark.Api.Services;
 namespace Daymark.Tests;
+
 [Collection("Postgres")]
 public class CategoryTests(ApiFixture app)
 {
