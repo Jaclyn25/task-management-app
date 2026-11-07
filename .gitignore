@@ -9,4 +9,5 @@
 .local/
 *.zip
 *.log
+*.tsbuildinfo
 !submission/evidence/*.log

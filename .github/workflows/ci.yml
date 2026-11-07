@@ -28,3 +28,72 @@ jobs:
       - run: dotnet restore
       - run: dotnet build -c Release --no-restore
       - run: dotnet test -c Release --no-build --logger "trx;LogFileName=backend.trx" --results-directory TestResults
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --audit-level=moderate
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: daymark_e2e
+          POSTGRES_USER: daymark
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U daymark -d daymark_e2e" --health-interval 5s --health-timeout 5s --health-retries 15
+    env:
+      ConnectionStrings__Workspace: Host=localhost;Database=daymark_e2e;Username=daymark
+      ASPNETCORE_ENVIRONMENT: Development
+      Database__Migrate: 'true'
+      Security__IdentityRequestsPerMinute: '1000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: dotnet build -c Release
+      - name: Start API
+        run: |
+          dotnet run --project backend/Daymark.Api -c Release --no-build --no-launch-profile --urls http://127.0.0.1:5084 > api.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:5084/api/health; then exit 0; fi
+            sleep 1
+          done
+          cat api.log
+          exit 1
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm run test:e2e
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            api.log
