@@ -9,6 +9,17 @@ permissions:
 jobs:
   backend:
     runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: daymark_test
+          POSTGRES_USER: daymark
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U daymark -d daymark_test" --health-interval 5s --health-timeout 5s --health-retries 15
+    env:
+      DAYMARK_TEST_CONNECTION: Host=localhost;Database=daymark_test;Username=daymark
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -16,3 +27,4 @@ jobs:
           dotnet-version: '10.0.x'
       - run: dotnet restore
       - run: dotnet build -c Release --no-restore
+      - run: dotnet test -c Release --no-build --logger "trx;LogFileName=backend.trx" --results-directory TestResults
