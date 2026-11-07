@@ -1,0 +1,52 @@
+{
+  "passed": 11,
+  "skipped": 0,
+  "failed": 0,
+  "tests": [
+    {
+      "status": "passed",
+      "name": "task form shows field validation and sends normalized dates and priority"
+    },
+    {
+      "status": "passed",
+      "name": "task form rejects a deadline before the start date"
+    },
+    {
+      "status": "passed",
+      "name": "editing loads task values and sends its concurrency version"
+    },
+    {
+      "status": "passed",
+      "name": "filters update server query for category and priority"
+    },
+    {
+      "status": "passed",
+      "name": "detail status update persists and deadline says overdue"
+    },
+    {
+      "status": "passed",
+      "name": "deleting a task requires confirmation"
+    },
+    {
+      "status": "passed",
+      "name": "dashboard renders real metrics and useful links"
+    },
+    {
+      "status": "passed",
+      "name": "empty tasks explain how to begin"
+    },
+    {
+      "status": "passed",
+      "name": "API errors provide a retry action"
+    },
+    {
+      "status": "passed",
+      "name": "sign-in form validates email and password"
+    },
+    {
+      "status": "passed",
+      "name": "board status controls persist a versioned change"
+    }
+  ],
+  "total": 11
+}

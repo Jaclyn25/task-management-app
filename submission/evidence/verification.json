@@ -1,0 +1,47 @@
+{
+  "verifiedAt": "2026-11-07T21:18:04.2593374+00:00",
+  "checks": [
+    "Release build",
+    "frontend production build",
+    "TypeScript",
+    "ESLint",
+    "Prettier",
+    "CSRF",
+    "ownership isolation",
+    "concurrency",
+    "rate limit",
+    "lockout",
+    "HTTP smoke",
+    "session/data restart persistence"
+  ],
+  "backend": {
+    "passed": 17,
+    "provider": "PostgreSQL 17",
+    "skipped": 0,
+    "failed": 0
+  },
+  "frontend": {
+    "passed": 11,
+    "failed": 0
+  },
+  "screenshots": "docs/screenshots/",
+  "ci": "https://github.com/Jaclyn25/task-management-app/actions/runs/42414647092",
+  "playwrightProduction": {
+    "passed": 6,
+    "engine": "Edge Chromium",
+    "failed": 0
+  },
+  "containers": {
+    "apiUid": 1654,
+    "web": "healthy",
+    "database": "healthy",
+    "api": "healthy"
+  },
+  "audits": {
+    "nugetVulnerablePackages": 0,
+    "npmVulnerabilities": 0
+  },
+  "url": "http://127.0.0.1:18084",
+  "testedApplicationCommit": "1ad59e311e61b2963d078179e027fd31ce9d95e8",
+  "finalMain": "Final merge SHA and final main run are checked after documentation merge and recorded at handoff/package manifest."
+}

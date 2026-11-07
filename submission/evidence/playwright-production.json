@@ -1,0 +1,44 @@
+{
+  "tests": [
+    {
+      "ok": true,
+      "name": "register, sign in, create, edit, complete, reopen, delete and sign out",
+      "status": "expected"
+    },
+    {
+      "ok": true,
+      "name": "categories, priorities, search and filters persist",
+      "status": "expected"
+    },
+    {
+      "ok": true,
+      "name": "deadline boundaries, dashboard and completed exclusion",
+      "status": "expected"
+    },
+    {
+      "ok": true,
+      "name": "private data cannot be accessed across users or without a session",
+      "status": "expected"
+    },
+    {
+      "ok": true,
+      "name": "mobile navigation and editor fit a narrow screen",
+      "status": "expected"
+    },
+    {
+      "ok": true,
+      "name": "board moves persist across reload and completion",
+      "status": "expected"
+    }
+  ],
+  "target": "http://127.0.0.1:18084",
+  "browser": "Microsoft Edge (Chromium)",
+  "stats": {
+    "startTime": "2026-11-07T21:14:07.902Z",
+    "duration": 42255.756,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

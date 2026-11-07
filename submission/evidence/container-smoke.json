@@ -1,0 +1,9 @@
+{
+  "base": "http://127.0.0.1:18084",
+  "health": "pass",
+  "frontend": "pass",
+  "securityHeaders": "pass",
+  "privateRoutes": "401",
+  "csrf": "400",
+  "verifiedAt": "2026-11-07T21:13:56.328Z"
+}
