@@ -16,7 +16,7 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseEnvironment("Testing");
         builder.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
-        { ["ConnectionStrings:Workspace"] = Connection, ["Database:Migrate"] = "false" }));
+        { ["ConnectionStrings:Workspace"] = Connection, ["Database:Migrate"] = "false", ["Security:IdentityRequestsPerMinute"] = "1000" }));
     }
     public async Task InitializeAsync()
     {
