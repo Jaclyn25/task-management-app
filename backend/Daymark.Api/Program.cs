@@ -15,6 +15,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<DashboardService>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddDbContext<WorkspaceDb>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Workspace")
     ?? throw new InvalidOperationException("Configure ConnectionStrings__Workspace.")));
