@@ -1,4 +1,5 @@
 using Daymark.Api.Data;
+using Daymark.Api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,6 +12,8 @@ builder.Logging.AddJsonConsole();
 builder.Services.AddControllersWithViews(o => o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
+builder.Services.AddScoped<CategoryService>();
 builder.Services.AddDbContext<WorkspaceDb>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Workspace")
     ?? throw new InvalidOperationException("Configure ConnectionStrings__Workspace.")));
 builder.Services.AddIdentity<WorkspaceUser, IdentityRole>(o =>
