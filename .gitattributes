@@ -1,2 +1,16 @@
 * text=auto eol=lf
 *.png binary
+
+# GitHub Linguist overrides to count all C# backend, migrations, and test code
+backend/** linguist-detectable=true
+backend/** linguist-generated=false
+backend/** linguist-vendored=false
+tests/** linguist-detectable=true
+tests/** linguist-generated=false
+tests/** linguist-vendored=false
+tests/** linguist-documentation=false
+*.cs linguist-detectable=true
+*.cs linguist-generated=false
+*.Designer.cs linguist-generated=false
+*ModelSnapshot.cs linguist-generated=false
+
