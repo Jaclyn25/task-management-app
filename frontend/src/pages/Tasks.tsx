@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, SlidersHorizontal, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { api } from '../api';
 import { priorities, statuses, type Category, type Dashboard, type PageResult } from '../types';
 import { Empty, ErrorState, Loading, TaskRows } from '../ui';
+
 export default function Tasks({ mode = 'all' }: { mode?: 'all' | 'completed' | 'deadlines' }) {
   const [params, setParams] = useSearchParams();
   const values = new URLSearchParams(params);
@@ -24,6 +26,15 @@ export default function Tasks({ mode = 'all' }: { mode?: 'all' | 'completed' | '
     queryKey: ['dashboard'],
     queryFn: () => api<Dashboard>('/dashboard'),
   });
+
+  const paramSearch = params.get('search') || '';
+  const [search, setSearch] = useState(paramSearch);
+  const [prevParamSearch, setPrevParamSearch] = useState(paramSearch);
+  if (prevParamSearch !== paramSearch) {
+    setPrevParamSearch(paramSearch);
+    setSearch(paramSearch);
+  }
+
   function change(key: string, value: string) {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
@@ -31,6 +42,21 @@ export default function Tasks({ mode = 'all' }: { mode?: 'all' | 'completed' | '
     next.delete('page');
     setParams(next, { replace: true });
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const current = params.get('search') || '';
+      if (current !== search) {
+        const next = new URLSearchParams(params);
+        if (search) next.set('search', search);
+        else next.delete('search');
+        next.delete('page');
+        setParams(next, { replace: true });
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [search, params, setParams]);
+
   const heading =
     mode === 'completed'
       ? 'Finished, and moving forward.'
@@ -73,8 +99,8 @@ export default function Tasks({ mode = 'all' }: { mode?: 'all' | 'completed' | '
             <input
               type="search"
               placeholder="Search title or description…"
-              value={params.get('search') || ''}
-              onChange={(e) => change('search', e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </label>
           <span className="filter-label">

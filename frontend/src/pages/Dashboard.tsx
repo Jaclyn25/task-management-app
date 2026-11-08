@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Plus, CheckCircle2, Circle, Clock3, AlertCircle } from 'lucide-react';
+import {
+  ArrowRight,
+  Plus,
+  CheckCircle2,
+  Circle,
+  Clock3,
+  AlertCircle,
+  ListTodo,
+} from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -10,12 +18,21 @@ import {
   Tooltip,
   BarChart,
   Bar,
+  Cell,
   CartesianGrid,
 } from 'recharts';
 import { api } from '../api';
 import type { Dashboard } from '../types';
 import { useProfile } from '../App';
 import { Loading, ErrorState, Empty, TaskRows, Due, Priority, dateLabel } from '../ui';
+
+const priorityColors: Record<string, string> = {
+  Low: 'oklch(55% 0.06 240)',
+  Medium: 'oklch(48% 0.08 157)',
+  High: 'oklch(58% 0.12 65)',
+  Urgent: 'oklch(52% 0.16 25)',
+};
+
 export default function DashboardPage() {
   const user = useProfile();
   const q = useQuery({ queryKey: ['dashboard'], queryFn: () => api<Dashboard>('/dashboard') });
@@ -37,7 +54,7 @@ export default function DashboardPage() {
       </div>
       <section className="overview-strip" aria-label="Task statistics">
         {[
-          [d.total, 'Total tasks', ListIcon, '/tasks'],
+          [d.total, 'Total tasks', ListTodo, '/tasks'],
           [d.toDo, 'To do', Circle, '/tasks?status=0'],
           [d.inProgress, 'In progress', Clock3, '/tasks?status=1'],
           [d.completed, 'Completed', CheckCircle2, '/completed'],
@@ -78,9 +95,9 @@ export default function DashboardPage() {
             role="img"
             aria-label={`Daily completions for the last seven days: ${d.progress.map((x) => `${x.day}: ${x.completed}`).join(', ')}`}
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={180}>
               <AreaChart data={d.progress} margin={{ top: 15, right: 15, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 4" vertical={false} />
+                <CartesianGrid strokeDasharray="3 4" vertical={false} stroke="var(--line)" />
                 <XAxis
                   dataKey="day"
                   tickFormatter={(v) =>
@@ -88,9 +105,27 @@ export default function DashboardPage() {
                   }
                   axisLine={false}
                   tickLine={false}
+                  stroke="var(--muted)"
                 />
-                <YAxis allowDecimals={false} axisLine={false} tickLine={false} />
-                <Tooltip />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  stroke="var(--muted)"
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--paper)',
+                    borderColor: 'var(--line)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-md)',
+                    fontSize: '12px',
+                    color: 'var(--ink)',
+                    padding: '8px 12px',
+                  }}
+                  itemStyle={{ color: 'var(--accent)', fontWeight: 600 }}
+                  labelStyle={{ color: 'var(--muted)', marginBottom: '4px' }}
+                />
                 <Area
                   type="monotone"
                   dataKey="completed"
@@ -167,7 +202,7 @@ export default function DashboardPage() {
             role="img"
             aria-label={d.priorities.map((p) => `${p.name}: ${p.count}`).join(', ')}
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={160}>
               <BarChart data={d.priorities} layout="vertical" margin={{ left: 0, right: 15 }}>
                 <XAxis type="number" allowDecimals={false} hide />
                 <YAxis
@@ -175,16 +210,30 @@ export default function DashboardPage() {
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  width={62}
+                  width={68}
+                  stroke="var(--muted)"
                 />
-                <Tooltip />
-                <Bar
-                  dataKey="count"
-                  name="Tasks"
-                  fill="var(--accent)"
-                  radius={[0, 4, 4, 0]}
-                  barSize={17}
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--paper)',
+                    borderColor: 'var(--line)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-md)',
+                    fontSize: '12px',
+                    color: 'var(--ink)',
+                    padding: '8px 12px',
+                  }}
+                  itemStyle={{ color: 'var(--ink)' }}
+                  labelStyle={{ color: 'var(--muted)', marginBottom: '4px' }}
                 />
+                <Bar dataKey="count" name="Tasks" radius={[0, 4, 4, 0]} barSize={18}>
+                  {d.priorities.map((entry) => (
+                    <Cell
+                      key={`cell-${entry.name}`}
+                      fill={priorityColors[entry.name] || 'var(--accent)'}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -200,9 +249,6 @@ export default function DashboardPage() {
       </div>
     </>
   );
-}
-function ListIcon() {
-  return <span aria-hidden="true">☷</span>;
 }
 function CalendarIcon() {
   return <Clock3 size={26} />;

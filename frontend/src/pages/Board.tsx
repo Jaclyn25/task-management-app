@@ -90,21 +90,45 @@ function Column({ status, today }: { status: number; today: string }) {
                 </p>
               )}
               <Due task={t} today={today} />
-              <label>
-                <span className="sr-only">Move {t.title}</span>
-                <select
-                  aria-label={`Move ${t.title}`}
-                  disabled={move.isPending}
-                  value={t.status}
-                  onChange={(e) => move.mutate({ task: t, value: Number(e.target.value) })}
-                >
-                  {statuses.map((s, i) => (
-                    <option value={i} key={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className="board-card-actions">
+                {status > 0 && (
+                  <button
+                    type="button"
+                    className="button secondary compact board-quick-move"
+                    title={`Move to ${statuses[status - 1]}`}
+                    disabled={move.isPending}
+                    onClick={() => move.mutate({ task: t, value: status - 1 })}
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                )}
+                <label className="board-move-label">
+                  <span className="sr-only">Move {t.title}</span>
+                  <select
+                    aria-label={`Move ${t.title}`}
+                    disabled={move.isPending}
+                    value={t.status}
+                    onChange={(e) => move.mutate({ task: t, value: Number(e.target.value) })}
+                  >
+                    {statuses.map((s, i) => (
+                      <option value={i} key={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {status < 2 && (
+                  <button
+                    type="button"
+                    className="button secondary compact board-quick-move"
+                    title={`Move to ${statuses[status + 1]}`}
+                    disabled={move.isPending}
+                    onClick={() => move.mutate({ task: t, value: status + 1 })}
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                )}
+              </div>
             </article>
           ))
         ) : (

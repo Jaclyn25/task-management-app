@@ -58,6 +58,7 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isDirty },
   } = useForm<Fields>({
     resolver: zodResolver(schema),
@@ -71,6 +72,8 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
       dueDate: task?.dueDate || '',
     },
   });
+  const titleValue = watch('title') || '';
+  const descValue = watch('description') || '';
   const save = useMutation({
     mutationFn: (v: Fields) =>
       api<Task>(
@@ -107,7 +110,15 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
       <div className="editor-layout">
         <form className="panel editor" onSubmit={handleSubmit((v) => save.mutate(v))} noValidate>
           <label>
-            Task title <span className="required">*</span>
+            <span className="label-text">
+              <span>
+                Task title{' '}
+                <span className="required" aria-hidden="true">
+                  *
+                </span>
+              </span>
+              <small className="field-counter">{titleValue.length}/160</small>
+            </span>
             <input
               autoFocus
               placeholder="e.g. Prepare the project proposal"
@@ -117,7 +128,10 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
             {errors.title && <small className="field-error">{errors.title.message}</small>}
           </label>
           <label>
-            Description
+            <span className="label-text">
+              Description
+              <small className="field-counter">{descValue.length}/5000</small>
+            </span>
             <textarea
               rows={5}
               placeholder="Add context, notes or a small checklist…"
@@ -149,7 +163,7 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
                 ))}
               </select>
             </label>
-            <label>
+            <label className="form-grid-full">
               Status
               <select {...register('status')}>
                 {statuses.map((s, i) => (
@@ -159,7 +173,6 @@ function Editor({ task, categories }: { task?: Task; categories: Category[] }) {
                 ))}
               </select>
             </label>
-            <span />
             <label>
               Start date
               <input type="date" {...register('startDate')} />
