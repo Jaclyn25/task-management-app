@@ -3,6 +3,22 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useProfile, useFeedback } from '../App';
 import { api, json } from '../api';
 import { ErrorState } from '../ui';
+
+const supportedTimezones =
+  typeof Intl !== 'undefined' && 'supportedValuesOf' in Intl
+    ? Intl.supportedValuesOf('timeZone')
+    : [
+        'UTC',
+        'Africa/Cairo',
+        'Europe/London',
+        'Europe/Paris',
+        'America/New_York',
+        'America/Los_Angeles',
+        'Asia/Kolkata',
+        'Asia/Tokyo',
+        'Australia/Sydney',
+      ];
+
 export default function Account() {
   const user = useProfile();
   const [name, setName] = useState(user.displayName);
@@ -46,18 +62,10 @@ export default function Account() {
           Timezone
           <input required list="timezones" value={zone} onChange={(e) => setZone(e.target.value)} />
           <datalist id="timezones">
-            {[
-              'UTC',
-              'Africa/Cairo',
-              'Europe/London',
-              'Europe/Paris',
-              'America/New_York',
-              'America/Los_Angeles',
-              'Asia/Kolkata',
-              'Asia/Tokyo',
-              'Australia/Sydney',
-            ].map((z) => (
-              <option key={z}>{z}</option>
+            {supportedTimezones.map((z) => (
+              <option key={z} value={z}>
+                {z}
+              </option>
             ))}
           </datalist>
           <small className="hint">

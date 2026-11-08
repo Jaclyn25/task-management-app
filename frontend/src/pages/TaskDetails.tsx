@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Copy, Check } from 'lucide-react';
 import { api, json } from '../api';
 import { statuses, type Dashboard, type Task } from '../types';
 import { Confirm, Due, ErrorState, Loading, Priority, Status, dateLabel } from '../ui';
 import { useFeedback, useProfile } from '../App';
+
 export default function TaskDetails() {
   const { id } = useParams();
+  const [copied, setCopied] = useState(false);
   const client = useQueryClient();
   const navigate = useNavigate();
   const feedback = useFeedback();
@@ -47,6 +50,14 @@ export default function TaskDetails() {
       timeStyle: 'short',
       timeZone: profile.timeZone,
     }).format(new Date(value));
+
+  function copyId() {
+    navigator.clipboard?.writeText(t.id);
+    setCopied(true);
+    feedback('Task ID copied to clipboard.');
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
     <>
       <Link className="back-link" to="/tasks">
@@ -91,7 +102,18 @@ export default function TaskDetails() {
             <p>Last updated {stamp(t.updatedAt)}</p>
             {t.completedAt && <p>Completed {stamp(t.completedAt)}</p>}
             <small>Times shown in {profile.timeZone}</small>
-            <code>{t.id}</code>
+            <div className="task-id-badge">
+              <code>{t.id}</code>
+              <button
+                type="button"
+                className="icon-button compact"
+                onClick={copyId}
+                aria-label="Copy task ID"
+                title="Copy task ID"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </button>
+            </div>
           </div>
         </section>
         <aside className="panel task-controls">

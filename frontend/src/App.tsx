@@ -13,6 +13,8 @@ import {
   Plus,
   Menu,
   Sun,
+  Moon,
+  AlertCircle,
 } from 'lucide-react';
 import { api, ApiError } from './api';
 import type { Profile } from './types';
@@ -41,6 +43,26 @@ const nav = [
 function Shell({ profile }: { profile: Profile }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('daymark-theme') as 'light' | 'dark' | null;
+    return (
+      saved ||
+      (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light')
+    );
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('daymark-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+
   const client = useQueryClient();
   const navigate = useNavigate();
   useEffect(() => {
@@ -103,7 +125,7 @@ function Shell({ profile }: { profile: Profile }) {
                 </span>
                 <UserRound size={16} />
               </NavLink>
-              <button onClick={logout}>
+              <button type="button" onClick={logout}>
                 <LogOut size={16} />
                 Sign out
               </button>
@@ -111,6 +133,7 @@ function Shell({ profile }: { profile: Profile }) {
           </aside>
           {open && (
             <button
+              type="button"
               className="scrim"
               aria-label="Close navigation"
               onClick={() => setOpen(false)}
@@ -119,6 +142,7 @@ function Shell({ profile }: { profile: Profile }) {
           <div className="main-shell">
             <header className="topbar">
               <button
+                type="button"
                 className="icon-button mobile-menu"
                 aria-label="Toggle navigation"
                 aria-expanded={open}
@@ -128,6 +152,15 @@ function Shell({ profile }: { profile: Profile }) {
               </button>
               <span className="topbar-label">Your day, with direction</span>
               <span className="topbar-right">
+                <button
+                  type="button"
+                  className="icon-button"
+                  onClick={toggleTheme}
+                  aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                  title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                  {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
                 <span className="private-label">Private workspace</span>
                 <Link className="button primary compact" to="/tasks/new">
                   <Plus size={17} />
@@ -187,7 +220,21 @@ export default function App() {
           <Route path="deadlines" element={<Tasks mode="deadlines" />} />
           <Route path="completed" element={<Tasks mode="completed" />} />
           <Route path="account" element={<Account />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="*"
+            element={
+              <div className="empty panel" style={{ maxWidth: 540, margin: '48px auto' }}>
+                <div className="empty-icon-box" aria-hidden="true">
+                  <AlertCircle size={28} />
+                </div>
+                <h3>Page not found</h3>
+                <p>The page or task you are looking for does not exist or may have been moved.</p>
+                <Link className="button primary" to="/">
+                  Return to overview
+                </Link>
+              </div>
+            }
+          />
         </Route>
       ) : (
         <Route path="*" element={<Navigate to="/login" replace />} />

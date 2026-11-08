@@ -4,23 +4,28 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sun, ArrowRight, Check } from 'lucide-react';
+import { Sun, ArrowRight, Check, Eye, EyeOff } from 'lucide-react';
 import { api, json } from '../api';
+
 const schema = z.object({
   email: z.email('Enter a valid email address.'),
   password: z.string().min(1, 'Enter your password.').max(128),
   displayName: z.string().max(80).optional(),
 });
+
 export default function Auth({ register: creating = false }: { register?: boolean }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const client = useQueryClient();
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema) });
+  const passwordVal = watch('password') || '';
   async function submit(values: z.infer<typeof schema>) {
     setError('');
     if (
@@ -128,17 +133,34 @@ export default function Auth({ register: creating = false }: { register?: boolea
             </label>
             <label>
               Password
-              <input
-                type="password"
-                autoComplete={creating ? 'new-password' : 'current-password'}
-                {...register('password')}
-                aria-invalid={!!errors.password}
-              />
+              <div className="password-input-wrap">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete={creating ? 'new-password' : 'current-password'}
+                  {...register('password')}
+                  aria-invalid={!!errors.password}
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               {errors.password && <small className="field-error">{errors.password.message}</small>}
             </label>
             {creating && (
               <p className="hint">
-                12+ characters with uppercase, lowercase, a number and a symbol.
+                {passwordVal.length >= 12 &&
+                /[a-z]/.test(passwordVal) &&
+                /[A-Z]/.test(passwordVal) &&
+                /\d/.test(passwordVal) &&
+                /[^a-zA-Z0-9]/.test(passwordVal)
+                  ? '✓ Password requirements satisfied.'
+                  : '12+ characters with uppercase, lowercase, a number and a symbol.'}
               </p>
             )}
             {error && (
